@@ -54,6 +54,18 @@ bool Agent::collideWithLevel(const std::vector<std::string> &levelData)
 
 bool Agent::collideWithAgent(Agent *agent)
 {
+	// is the agent too far away in the x direction
+	if (agent->_position.x < _position.x - AGENT_WIDTH)
+		return false;
+	else if (agent->_position.x > _position.x + AGENT_WIDTH)
+		return false;
+
+	// is the agent too far away in the y direction
+	if (agent->_position.y < _position.y - AGENT_WIDTH)
+		return false;
+	else if (agent->_position.y > _position.y + AGENT_WIDTH)
+		return false;
+
 	const float MIN_DISTANCE = AGENT_RADIUS * 2.0f;
 
 	glm::vec2 centerPosA = _position + glm::vec2(AGENT_RADIUS);

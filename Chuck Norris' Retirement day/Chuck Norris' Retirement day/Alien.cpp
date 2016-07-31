@@ -14,17 +14,17 @@ void Alien::init(const glm::vec2 &position, const float &speed, const float &hea
 	_position = position;
 	_speed = speed;
 	_health = health;
-	_color.setColor(0, 255, 0, 255);
+	_color = Pixels2D::ColorRGBA8(0, 255, 0, 255);
 }
 
-void Alien::update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens)
+void Alien::update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens, const float &deltaTime)
 {
 	Human *closestHuman = getNearestHuman(humans);
 
 	if (closestHuman != nullptr)
 	{
 		glm::vec2 direction = glm::normalize(closestHuman->getPosition() - _position);
-		_position += direction * _speed;
+		_position += direction * _speed * deltaTime;
 	}
 
 	collideWithLevel(levelData);

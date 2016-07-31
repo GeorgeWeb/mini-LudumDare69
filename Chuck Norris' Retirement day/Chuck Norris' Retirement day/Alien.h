@@ -3,7 +3,7 @@
 
 #include "Agent.h"
 
-const float ALIEN_SPEED = 4.0f;
+const float ALIEN_SPEED = 1.0f;
 const float ALIEAN_HEALTH = 120.0f;
 
 class Alien : public Agent
@@ -14,7 +14,7 @@ public:
 
 	void init(const glm::vec2 &position, const float &speed, const float &health);
 
-	void update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens) override;
+	void update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens, const float &deltaTime) final override;
 
 private:
 	Human *getNearestHuman(std::vector<Human*> &humans);

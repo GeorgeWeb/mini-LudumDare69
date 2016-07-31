@@ -5,7 +5,7 @@
 
 #include <glm/glm.hpp>
 
-const float AGENT_WIDTH = 92.0f;
+const float AGENT_WIDTH = 120.0f;
 const float AGENT_RADIUS = AGENT_WIDTH / 2.0f;
 
 class Alien;
@@ -17,7 +17,7 @@ public:
 	Agent();
 	virtual ~Agent();
 
-	virtual void update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens) = 0;
+	virtual void update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens, const float &deltaTime) = 0;
 
 	bool collideWithLevel(const std::vector<std::string> &levelData);
 
@@ -38,7 +38,7 @@ protected:
 	void collideWithTile(const glm::vec2 &tilePosition);
 public:
 	glm::vec2 _position;
-	Pixels2D::Color _color;
+	Pixels2D::ColorRGBA8 _color;
 	float _speed;
 	float _health;
 };
