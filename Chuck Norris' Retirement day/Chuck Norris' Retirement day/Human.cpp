@@ -19,7 +19,7 @@ void Human::init(const glm::vec2 &position, const float &speed, const float &hea
 	static std::mt19937 randomEngine(time(nullptr));
 	static std::uniform_real_distribution<float> randDir(-1.0f, 1.0f);
 
-	_color.setColor(255, 255, 255, 255);
+	_color = Pixels2D::ColorRGBA8(255, 255, 255, 255);
 	// initializations
 	_position = position;
 	_direction = glm::vec2(randDir(randomEngine), randDir(randomEngine));
@@ -32,12 +32,12 @@ void Human::init(const glm::vec2 &position, const float &speed, const float &hea
 	_direction = glm::normalize(_direction);
 }
 
-void Human::update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens)
+void Human::update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens, const float &deltaTime)
 {
 	static std::mt19937 randomEngine(time(nullptr));
 	static std::uniform_real_distribution<float> randRotate(-60.0f, 60.0f);
 
-	_position += _direction * _speed;
+	_position += _direction * _speed * deltaTime;
 
 	// humans change direction every few frames
 	if (_frames == 60.0f)

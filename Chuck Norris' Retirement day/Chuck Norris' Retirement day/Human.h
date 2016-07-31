@@ -8,7 +8,7 @@
 // const float RAD_TO_DEG = 180.0f / M_PI;
 // no need of these since I found glm provides me with the glm::radians() function :)
 
-const float HUMAN_SPEED = 3.0f;
+const float HUMAN_SPEED = 2.0f;
 const float HUMAN_HEALTH = 20.0f;
 
 class Human : public Agent
@@ -19,7 +19,7 @@ public:
 
 	void init(const glm::vec2 &position, const float &speed, const float &health);
 
-	virtual void update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens);
+	virtual void update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens, const float &deltaTime) override;
 
 private:
 	glm::vec2 _direction;

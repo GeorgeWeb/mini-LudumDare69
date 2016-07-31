@@ -14,7 +14,7 @@ public:
 	Gun(const std::string &name, const unsigned int &fireRate, const unsigned int &bulletsPerShot, const float &spread, const float &bulletDamage, const float &bulletSpeed);
 	~Gun();
 
-	void update(const bool &isMouseDown, const glm::vec2 &direction, const glm::vec2 &position, std::vector<Bullet> &bullets);
+	void update(const bool &isMouseDown, const glm::vec2 &direction, const glm::vec2 &position, std::vector<Bullet> &bullets, const float &deltaTime);
 
 private:
 	void fire(const glm::vec2 &direction, const glm::vec2 &position, std::vector<Bullet> &bullets);
@@ -35,7 +35,7 @@ private:
 
 	float _bulletDamage;
 
-	unsigned int _frameCounter;
+	float _frameCounter;
 };
 
 #endif // !GUN_HGUARD

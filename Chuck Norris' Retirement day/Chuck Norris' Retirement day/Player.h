@@ -9,7 +9,7 @@
 
 class Gun;
 
-const float PLAYER_SPEED = 5.0f;
+const float PLAYER_SPEED = 3.0f;
 const float PLAYER_HEALTH = 200.0f;
 
 class Player : public Human
@@ -22,7 +22,7 @@ public:
 
 	void addGun(Gun *gun);
 
-	void update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens) override;
+	void update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens, const float &deltaTime) final override;
 
 private:
 	Pixels2D::InputManager *_inputManager;

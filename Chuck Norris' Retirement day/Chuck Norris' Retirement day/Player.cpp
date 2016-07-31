@@ -16,7 +16,7 @@ void Player::init(const glm::vec2 &position, const float &speed, const float &he
 	_position = position;
 	_speed = speed;
 	_health = health;
-	_color.setColor(255, 255, 255, 255);
+	_color = Pixels2D::ColorRGBA8(255, 255, 255, 255);
 
 	_inputManager = inputManager;
 
@@ -35,16 +35,16 @@ void Player::addGun(Gun* gun)
 		_currentGunIndex = 0;
 }
 
-void Player::update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens)
+void Player::update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens, const float &deltaTime)
 {
-	if (_inputManager->isKeyPressed(SDLK_w) || _inputManager->isKeyPressed(SDLK_UP))
+	if (_inputManager->isKeyDown(SDLK_w) || _inputManager->isKeyDown(SDLK_UP))
 		_position.y += _speed;
-	else if (_inputManager->isKeyPressed(SDLK_s) || _inputManager->isKeyPressed(SDLK_DOWN))
+	else if (_inputManager->isKeyDown(SDLK_s) || _inputManager->isKeyDown(SDLK_DOWN))
 		_position.y -= _speed;
 
-	if (_inputManager->isKeyPressed(SDLK_a) || _inputManager->isKeyPressed(SDLK_LEFT))
+	if (_inputManager->isKeyDown(SDLK_a) || _inputManager->isKeyDown(SDLK_LEFT))
 		_position.x -= _speed;
-	else if (_inputManager->isKeyPressed(SDLK_d) || _inputManager->isKeyPressed(SDLK_RIGHT))
+	else if (_inputManager->isKeyDown(SDLK_d) || _inputManager->isKeyDown(SDLK_RIGHT))
 		_position.x += _speed;
 
 	if (_inputManager->isKeyPressed(SDLK_1) && _guns.size() >= 0)
@@ -63,7 +63,10 @@ void Player::update(const std::vector<std::string> &levelData, std::vector<Human
 
 		glm::vec2 direction = glm::normalize(mouseCoords - centerPosition);
 
-		_guns[_currentGunIndex]->update(_inputManager->isKeyPressed(SDL_BUTTON_LEFT), direction, centerPosition, *_bullets);
+		if(_guns[_currentGunIndex] == _guns[0] || _guns[_currentGunIndex] == _guns[1])
+			_guns[_currentGunIndex]->update(_inputManager->isKeyPressed(SDL_BUTTON_LEFT), direction, centerPosition, *_bullets, deltaTime);
+		else
+			_guns[_currentGunIndex]->update(_inputManager->isKeyDown(SDL_BUTTON_LEFT), direction, centerPosition, *_bullets, deltaTime);
 	}
 	
 	collideWithLevel(levelData);
