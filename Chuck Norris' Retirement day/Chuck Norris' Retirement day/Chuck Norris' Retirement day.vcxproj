@@ -35,6 +35,7 @@
     <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Bullet.h" />
     <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Gun.h" />
     <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Human.h" />
+    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\IconResource.h" />
     <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Level.h" />
     <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\MainGame.h" />
     <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Player.h" />
@@ -45,6 +46,9 @@
   <ItemGroup>
     <None Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Shaders\textureShading.frag" />
     <None Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Shaders\textureShading.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\reousrces.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1F796D5C-7B19-4260-B049-5815870D751B}</ProjectGuid>
@@ -100,6 +104,10 @@
     <IncludePath>$(SolutionDir)Dependencies/includes/;$(SolutionDir);$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Dependencies/libs/;$(SolutionDir)Debug/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(SolutionDir)Dependencies/includes/;$(SolutionDir);$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Dependencies/libs/;$(SolutionDir)Release/;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -108,7 +116,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;opengl32.lib;glew32.lib;Pixels2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;SDL2_image.lib;opengl32.lib;glew32.lib;Pixels2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -129,6 +137,8 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;SDL2_image.lib;opengl32.lib;glew32.lib;Pixels2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

@@ -68,6 +68,9 @@
     <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\IconResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Levels\level1.txt" />
@@ -75,5 +78,10 @@
   <ItemGroup>
     <None Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Shaders\textureShading.frag" />
     <None Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Shaders\textureShading.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\reousrces.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
