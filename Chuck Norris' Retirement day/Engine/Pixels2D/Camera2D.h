@@ -18,6 +18,8 @@ namespace Pixels2D
 
 		const glm::vec2 &convertScreenToWorld(glm::vec2 screenCoords);
 
+		bool isBoxInView(const glm::vec2 &position, const glm::vec2 &dimensions);
+
 		// setters
 		inline void setPosition(const glm::vec2 &newPosition) {
 			_position = newPosition;

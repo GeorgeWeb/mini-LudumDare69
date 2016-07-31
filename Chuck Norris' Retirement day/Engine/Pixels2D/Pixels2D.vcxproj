@@ -72,6 +72,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)Dependencies/includes/;$(IncludePath)</IncludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(SolutionDir)Dependencies/includes/;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>
@@ -136,38 +139,38 @@
     <Text Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Camera2D.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Errors.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\GLSLProgram.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\ImageLoader.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\InputManager.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\IOManager.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\picoPNG.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Pixels2D.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\ResourceManager.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Sprite.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\SpriteBatch.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\TextureCache.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Timing.cpp" />
-    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Window.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Camera2D.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Errors.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\GLSLProgram.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ImageLoader.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\InputManager.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\IOManager.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\picoPNG.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Pixels2D.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ResourceManager.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Sprite.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\SpriteBatch.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\TextureCache.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Timing.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Camera2D.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Errors.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\GLSLProgram.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\GLTexture.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\ImageLoader.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\InputManager.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\IOManager.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\picoPNG.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Pixels2D.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\ResourceManager.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Sprite.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\SpriteBatch.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\TextureCache.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Timing.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Vertex.h" />
-    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\Window.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Camera2D.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Errors.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\GLSLProgram.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\GLTexture.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ImageLoader.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\InputManager.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\IOManager.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\picoPNG.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Pixels2D.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ResourceManager.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Sprite.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\SpriteBatch.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\TextureCache.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Timing.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Vertex.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
