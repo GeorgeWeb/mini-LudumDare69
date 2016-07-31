@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Agent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Alien.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Bullet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Gun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Human.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Level.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\MainGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Agent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Alien.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Bullet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Gun.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Human.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Level.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\MainGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Levels\level1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Shaders\textureShading.frag" />
+    <None Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Shaders\textureShading.vert" />
+  </ItemGroup>
+</Project>
