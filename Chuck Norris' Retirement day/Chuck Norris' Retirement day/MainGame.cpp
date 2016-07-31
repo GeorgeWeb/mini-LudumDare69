@@ -9,9 +9,10 @@
 #include <SDL/SDL.h>
 #include <iostream>
 #include <random>
+#include <algorithm>
 #include <ctime>
 
-MainGame::MainGame() : _screenWidth(1024), _screenHeight(768), _gameState(GameState::PLAY), _fps(0), _maxFPS(60.0f), _player(nullptr), _numHumansKilled(0), _numAliensKilled(0)
+MainGame::MainGame() : _screenWidth(1280), _screenHeight(720), _gameState(GameState::PLAY), _fps(0), _maxFPS(60.0f), _player(nullptr), _numHumansKilled(0), _numAliensKilled(0)
 {
 }
 
@@ -119,21 +120,57 @@ void MainGame::initShaders()
 
 void MainGame::gameLoop()
 {
+	// max number of physics steps per frame
+	const int MAX_PHYSICS_STEPS = 6;
+	// number of milliseconds in a second
+	const float MS_PER_SECOND = 1000.0f;
+	// the desired frame time per frame
+	const float DESIRED_FRAMETIME = MS_PER_SECOND / _maxFPS;
+	// maximum size of deltaTime
+	const float MAX_DELTA_TIME = 1.0f;
+	
+	// used to cap the FPS
 	Pixels2D::FPSLimiter fpsLimiter;
 	fpsLimiter.setMaxFPS(_maxFPS);
+
+	// zoom out the camera by 4x
+	const float CAMERA_SCALE = 1.0f / 4.0f;
+	_camera.setScale(CAMERA_SCALE);
+
+	// start our previousTicks variable
+	float previousTicks = SDL_GetTicks();
 
 	// main loop
 	while (_gameState == GameState::PLAY)
 	{
 		fpsLimiter.beginFrame();
 
+		float newTicks = SDL_GetTicks();
+		float frameTime = newTicks - previousTicks;
+		previousTicks = newTicks;
+		float totalDeltaTime = frameTime / DESIRED_FRAMETIME;		
+
 		checkVictory();
+
+		_inputManager.update();
 
 		processInput();
 
-		updateAgents();
-
-		updateBullets();
+		// makes sure not to spiral to death!
+		int i = 0;
+		// loop while still have steps to process.
+		while (totalDeltaTime > 0.0f && i < MAX_PHYSICS_STEPS)
+		{
+			// the deltaTime should be the the smaller of the totalDeltaTime and MAX_DELTA_TIME
+			float deltaTime = std::min(totalDeltaTime, MAX_DELTA_TIME);
+			// update all physics here and pass in deltaTime
+			updateAgents(deltaTime);
+			updateBullets(deltaTime);
+			// subtract from totalDeltaTime (the length we took)
+			totalDeltaTime -= deltaTime;
+			// increment the frame counter
+			i++;
+		}
 
 		_camera.setPosition(_player->getPosition());
 
@@ -142,18 +179,27 @@ void MainGame::gameLoop()
 		drawGame();
 
 		_fps = fpsLimiter.endFrame();
+
+		// temporary fps display...
+		static unsigned int frameCounter = 0;
+		frameCounter++;
+		if (frameCounter == 100)
+		{
+			std::cout << _fps << std::endl;
+			frameCounter = 0;
+		}
 	}
 }
 
-void MainGame::updateAgents()
+void MainGame::updateAgents(const float &deltaTime)
 {
 	// update all humans
 	for (auto human : _humans)
-		human->update(_levels[_currentLevel]->getLevelData(), _humans, _aliens);
+		human->update(_levels[_currentLevel]->getLevelData(), _humans, _aliens, deltaTime);
 
 	// update all aliens
 	for (auto alien : _aliens)
-		alien->update(_levels[_currentLevel]->getLevelData(), _humans, _aliens);
+		alien->update(_levels[_currentLevel]->getLevelData(), _humans, _aliens, deltaTime);
 
 	// update alien collisions
 	for (unsigned int i = 0; i < _aliens.size(); i++)
@@ -195,13 +241,13 @@ void MainGame::updateAgents()
 	}
 }
 
-void MainGame::updateBullets()
+void MainGame::updateBullets(const float &deltaTime)
 {
 	// update and collide with world
 	for (unsigned int i = 0; i < _bullets.size();)
 	{
 		// if true => the bullet collided with the world objects
-		if (_bullets[i].update(_levels[_currentLevel]->getLevelData()))
+		if (_bullets[i].update(_levels[_currentLevel]->getLevelData(), deltaTime))
 		{
 			// remove the bullet from the vector
 			_bullets[i] = _bullets.back();
@@ -322,10 +368,10 @@ void MainGame::processInput()
         }
 		
 		// quit the game
-		if (_inputManager.isKeyPressed(SDLK_ESCAPE))
+		if (_inputManager.isKeyDown(SDLK_ESCAPE))
 			_gameState = GameState::EXIT;
 
-		if (_inputManager.isKeyPressed(SDL_BUTTON_LEFT))
+		if (_inputManager.isKeyDown(SDL_BUTTON_LEFT))
 		{
 
 		}
@@ -352,34 +398,51 @@ void MainGame::drawGame()
 	GLint pUniform = _textureProgram.getUniformLocation("P");
 	glUniformMatrix4fv(pUniform, 1, GL_FALSE, &cameraMatrix[0][0]);
 
-
 	// draw level
 	_levels[_currentLevel]->draw();
 
 	_agentSpriteBatch.begin();
 
+	const glm::vec2 agentDims(AGENT_RADIUS * 2.0f);
+
 	// human texture types
 	static int playerTextureID = Pixels2D::ResourceManager::getTexture("Textures/Player/bro5_fire0004@2x.png").id;
 	static int humanTextureID = Pixels2D::ResourceManager::getTexture("Textures/NPCs/human.png").id;
 	// draw humans
-	for (auto human : _humans)
+	for (auto &human : _humans)
 	{
-		if(human == _humans.front()) ///< if the human is the player
+		if (human == _humans.front())
+		{
+			// draw the player with unique texture
 			human->draw(_agentSpriteBatch, playerTextureID);
-		else ///<  the other humans that are NPCs
-			human->draw(_agentSpriteBatch, humanTextureID);
+		}
+		else
+		{
+			// draw the other humans with different texture
+			// and check ...
+			if(_camera.isBoxInView(human->getPosition(), agentDims))
+				human->draw(_agentSpriteBatch, humanTextureID);
+		}
 	}
 
 	// alien texture
 	static int alienTextureID = Pixels2D::ResourceManager::getTexture("Textures/NPCs/zombie-scared-face.png").id;
 	// draw aliens
-	for (auto alien : _aliens)
-		alien->draw(_agentSpriteBatch, alienTextureID);
+	for (auto &alien : _aliens)
+	{
+		// do the check ...
+		if (_camera.isBoxInView(alien->getPosition(), agentDims))
+			alien->draw(_agentSpriteBatch, alienTextureID);
+	}
 	
 	// bullet texture: ...
 	// draw bullets
-	for (auto bullet : _bullets)
-		bullet.draw(_agentSpriteBatch);
+	for (auto &bullet : _bullets)
+	{
+		// do the check ...
+		if (_camera.isBoxInView(bullet.getPosition(), agentDims))
+			bullet.draw(_agentSpriteBatch);
+	}
 
 	_agentSpriteBatch.end();
 

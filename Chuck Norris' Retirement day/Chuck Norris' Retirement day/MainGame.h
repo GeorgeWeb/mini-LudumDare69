@@ -41,10 +41,10 @@ private:
 	void gameLoop();
 
 	// update all agents (player, humans, aliens)
-	void updateAgents();
+	void updateAgents(const float &deltaTime);
 
 	// update all bullets
-	void updateBullets();
+	void updateBullets(const float &deltaTime);
 
 	// checks the win condition
 	void checkVictory();
@@ -91,7 +91,7 @@ private:
 	GameState _gameState;
 
 	float _fps;
-	float _maxFPS;
+	const float _maxFPS;
 
 	unsigned int _currentLevel;
 

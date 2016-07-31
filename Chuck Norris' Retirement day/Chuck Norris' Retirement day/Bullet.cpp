@@ -16,9 +16,9 @@ Bullet::~Bullet()
 {
 }
 
-bool Bullet::update(const std::vector<std::string> &levelData)
+bool Bullet::update(const std::vector<std::string> &levelData, const float &deltaTime)
 {
-	_position += _direction * _speed;
+	_position += _direction * _speed * deltaTime;
 	
 	// handle collision ...
 	return collideWithWorld(levelData);
@@ -29,8 +29,7 @@ void Bullet::draw(Pixels2D::SpriteBatch &spriteBatch)
 	glm::vec4 destRect(_position.x + BULLET_RADIUS, _position.y + BULLET_RADIUS, BULLET_RADIUS * 2, BULLET_RADIUS * 2);
 	const glm::vec4 uvRect(0.0f, 0.0f, 1.0f, 1.0f);
 
-	Pixels2D::Color color;
-	color.setColor(75, 75, 75, 255);
+	Pixels2D::ColorRGBA8 color = Pixels2D::ColorRGBA8(75, 75, 75, 255);
 
 	spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/circle.png").id, 0.0f, color);
 }
