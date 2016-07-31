@@ -34,9 +34,7 @@ Level::Level(const string &fileName)
 	_spriteBatch.begin();
 
 	glm::vec4 uvRect(0.0f, 0.0f, 1.0f, 1.0f);
-	Pixels2D::Color whiteColor, blackColor;
-	whiteColor.setColor(255, 255, 255, 255);
-	blackColor.setColor(0, 0, 0, 255);
+	Pixels2D::ColorRGBA8 whiteColor(255,255,255,255);
 
 	// render tiles
 	for (int y = 0; y < _levelData.size(); y++)

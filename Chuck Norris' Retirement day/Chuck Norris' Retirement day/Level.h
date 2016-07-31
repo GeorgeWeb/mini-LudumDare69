@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-const float TILE_WIDTH = 96.0f;
+const float TILE_WIDTH = 128.0f;
 
 class Level
 {
