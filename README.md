@@ -1,1 +1,3 @@
-# mini-LudumDare69
+# Mini Ludum Dare #69 game competition project
+## Chuck Norris' Retirement day
+### More to come...
