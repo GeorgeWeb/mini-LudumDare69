@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef SPRITEBATCH_HGUARD
 #define SPRITEBATCH_HGUARD
 
@@ -96,11 +98,11 @@ namespace Pixels2D
 		GlyphSortType _sortType;
 
 		// using this just for sorting
-		std::vector<Glyph*> _glyphPointers;
+		std::vector<Glyph*> m_glyphPointers;
 		// these are going to be the actual glyphs
-		std::vector<Glyph> _glyphs;
+		std::vector<Glyph> m_glyphs;
 
-		std::vector<RenderBatch> _renderBatches;
+		std::vector<RenderBatch> m_renderBatches;
 	};
 }
 
