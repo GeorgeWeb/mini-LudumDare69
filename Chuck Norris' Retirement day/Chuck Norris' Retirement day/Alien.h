@@ -4,7 +4,7 @@
 #include "Agent.h"
 
 const float ALIEN_SPEED = 1.0f;
-const float ALIEAN_HEALTH = 120.0f;
+const float ALIEAN_HEALTH = 50.0f;
 
 class Alien : public Agent
 {

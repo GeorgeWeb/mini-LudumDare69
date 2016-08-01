@@ -1,6 +1,6 @@
 #include "Level.h"
 
-#include <Engine/Pixels2D/Errors.h>
+#include <Engine/Pixels2D/Pixels2DErrors.h>
 #include <Engine/Pixels2D/ResourceManager.h>
 
 #include <iostream>
@@ -21,61 +21,71 @@ Level::Level(const string &fileName)
 
 	// throw away the first string in temp
 	string tempStr;
-	file >> tempStr >> _numHumans;
+	file >> tempStr >> m_numHumans;
 
 	// throw away the rest of the first line
 	getline(file, tempStr);
 
 	// read file and get each line
 	while (getline(file, tempStr))
-		_levelData.push_back(tempStr);
+		m_levelData.push_back(tempStr);
 
-	_spriteBatch.init();
-	_spriteBatch.begin();
+	m_spriteBatch.init();
+	m_spriteBatch.begin();
 
 	glm::vec4 uvRect(0.0f, 0.0f, 1.0f, 1.0f);
 	Pixels2D::ColorRGBA8 whiteColor(255,255,255,255);
 
 	// render tiles
-	for (int y = 0; y < _levelData.size(); y++)
+	for (int y = 0; y < m_levelData.size(); y++)
 	{
-		for (int x = 0; x < _levelData[y].size(); x++)
+		for (int x = 0; x < m_levelData[y].size(); x++)
 		{
 			// get the tile
-			char tile = _levelData[y][x];
+			char tile = m_levelData[y][x];
 
 			// get dest rect
 			glm::vec4 destRect(x * TILE_WIDTH, y * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH);
-
 			// process the tile
 			switch (tile)
 			{
 				// environment
-				case '.': ///<
-					_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/floor_grass2.png").id, 0.0f, whiteColor);
+				case '.':
+					m_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/floor_grass2.png").id, 0.0f, whiteColor);
 					break;
-				case 'B': ///<
-				case 'R': ///<
-					_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/red_bricks.png").id, 0.0f, whiteColor);
+				case 'f':
+					m_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/woodenfloor.png").id, 0.0f, whiteColor);
 					break;
-				case 'L': ///<
-					_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/light_bricks.png").id, 0.0f, whiteColor);
+				case 'm':
+					m_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/floor_grass1.png").id, 0.0f, whiteColor);
 					break;
-				case 'G': ///<
-					_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/glass.png").id, 0.0f, whiteColor);
+				case 'X':
+					m_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/light_bricks.png").id, 0.0f, whiteColor);
+					break;
+				case 'B':
+					m_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/light_bricks.png").id, 0.0f, whiteColor);
+					break;
+				case 'R':
+					m_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/cryptwall.png").id, 0.0f, whiteColor);
+					break;
+				case 'L':
+					m_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/redbrickwall.png").id, 0.0f, whiteColor);
+					break;
+				case 'G':
+					m_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/glass.png").id, 0.0f, whiteColor);
 					break;
 				
 				// agents
 				case '@': ///< player
-					_levelData[y][x] = '.'; // to avoid collision with aliens
-					_playerStartPosition.x = x * TILE_WIDTH;
-					_playerStartPosition.y = y * TILE_WIDTH;
-					_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/floor_grass2.png").id, 0.0f, whiteColor);
+					m_levelData[y][x] = '.'; ///< to avoid collision with aliens
+					m_playerStartPosition.x = x * TILE_WIDTH;
+					m_playerStartPosition.y = y * TILE_WIDTH;
+					m_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/floor_grass1.png").id, 0.0f, whiteColor);
 					break;
 				case 'A': ///< aliens
-					_levelData[y][x] = '.'; // to avoid collision with player
-					_alienStartPositions.emplace_back(x * TILE_WIDTH, y * TILE_WIDTH);
-					_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/floor_grass2.png").id, 0.0f, whiteColor);
+					m_levelData[y][x] = '.'; ///< to avoid collision with player
+					m_alienStartPositions.emplace_back(x * TILE_WIDTH, y * TILE_WIDTH);
+					m_spriteBatch.draw(destRect, uvRect, Pixels2D::ResourceManager::getTexture("Textures/Environment/floor_grass2.png").id, 0.0f, whiteColor);
 					break;
 				
 				default:
@@ -84,7 +94,7 @@ Level::Level(const string &fileName)
 		}
 	}
 
-	_spriteBatch.end();
+	m_spriteBatch.end();
 }
 
 Level::~Level()
@@ -93,5 +103,5 @@ Level::~Level()
 
 void Level::draw()
 {
-	_spriteBatch.renderBatch();
+	m_spriteBatch.renderBatch();
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef PLAYER_HGUARD
 #define PLAYER_HGUARD
 
@@ -10,7 +12,7 @@
 class Gun;
 
 const float PLAYER_SPEED = 3.0f;
-const float PLAYER_HEALTH = 200.0f;
+const float PLAYER_HEALTH = 100.0f;
 
 class Player : public Human
 {
@@ -27,10 +29,10 @@ public:
 private:
 	Pixels2D::InputManager *_inputManager;
 	
-	std::vector<Gun*> _guns;
+	std::vector<Gun*> m_guns;
 	int _currentGunIndex;
-	Pixels2D::Camera2D *_camera;
-	std::vector<Bullet> *_bullets;
+	Pixels2D::Camera2D *m_mainCamera;
+	std::vector<Bullet> *m_bullets;
 };
 
 #endif // !PLAYER_HGUARD

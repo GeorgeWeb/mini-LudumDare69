@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef AGENT_HGUARD
 #define AGENT_HGUARD
 
@@ -29,7 +31,7 @@ public:
 	bool applyDamage(const float &damage);
 
 	// getters
-	inline const glm::vec2 &getPosition() const { return _position; }
+	inline const glm::vec2 &getPosition() const { return m_position; }
 
 protected:
 	void checkTilePosition(const std::vector<std::string> &levelData, std::vector<glm::vec2> &collideTilePositions, const float &x, const float &y);
@@ -37,10 +39,10 @@ protected:
 	// implementing Axis Aligned Bounding Box collision
 	void collideWithTile(const glm::vec2 &tilePosition);
 public:
-	glm::vec2 _position;
-	Pixels2D::ColorRGBA8 _color;
-	float _speed;
-	float _health;
+	glm::vec2 m_position;
+	Pixels2D::ColorRGBA8 m_color;
+	float m_speed;
+	float m_health;
 };
 
 #endif // !AGENT_HGUARD

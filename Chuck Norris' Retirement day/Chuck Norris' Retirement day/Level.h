@@ -18,21 +18,21 @@ public:
 	void draw();
 
 	// getters
-	inline glm::vec2 getPlayerStartPos() const { return _playerStartPosition; }
-	inline const std::vector<glm::vec2> &getAlienStartPositions() const { return _alienStartPositions; }
-	inline const std::vector<std::string> &getLevelData() const { return _levelData; }
-	inline const unsigned int &getNumHumans() const { return _numHumans; }
-	inline const unsigned int &getWidth() const { return _levelData[0].size(); }
-	inline const unsigned int &getHeight() const { return _levelData.size(); }
+	inline glm::vec2 getPlayerStartPos() const { return m_playerStartPosition; }
+	inline const std::vector<glm::vec2> &getAlienStartPositions() const { return m_alienStartPositions; }
+	inline const std::vector<std::string> &getLevelData() const { return m_levelData; }
+	inline const unsigned int &getNumHumans() const { return m_numHumans; }
+	inline const unsigned int &getWidth() const { return m_levelData[0].size(); }
+	inline const unsigned int &getHeight() const { return m_levelData.size(); }
 
 private:
-	std::vector<std::string> _levelData;
-	unsigned int _numHumans;
+	std::vector<std::string> m_levelData;
+	unsigned int m_numHumans;
 
-	Pixels2D::SpriteBatch _spriteBatch;
+	Pixels2D::SpriteBatch m_spriteBatch;
 
-	glm::vec2 _playerStartPosition;
-	std::vector<glm::vec2> _alienStartPositions;
+	glm::vec2 m_playerStartPosition;
+	std::vector<glm::vec2> m_alienStartPositions;
 };
 
 #endif // !LEVEL_HGUARD
