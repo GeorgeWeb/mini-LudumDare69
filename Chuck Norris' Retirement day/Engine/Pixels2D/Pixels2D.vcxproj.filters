@@ -21,9 +21,6 @@
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Camera2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Errors.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\GLSLProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -60,12 +57,24 @@
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\SpriteFont.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\AudioEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pixels2DErrors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ParticleBatch2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ParticleEngine2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Camera2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Errors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\GLSLProgram.h">
@@ -108,6 +117,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\SpriteFont.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\AudioEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pixels2DErrors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ParticleBatch2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ParticleEngine2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

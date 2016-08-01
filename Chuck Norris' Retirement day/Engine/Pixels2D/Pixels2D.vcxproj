@@ -139,8 +139,11 @@
     <Text Include="..\..\Chuck Norris%27 Retirement day\Pixels2D\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\AudioEngine.cpp" />
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Camera2D.cpp" />
-    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Errors.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ParticleBatch2D.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ParticleEngine2D.cpp" />
+    <ClCompile Include="Pixels2DErrors.cpp" />
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\GLSLProgram.cpp" />
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ImageLoader.cpp" />
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\InputManager.cpp" />
@@ -150,13 +153,17 @@
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ResourceManager.cpp" />
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Sprite.cpp" />
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\SpriteBatch.cpp" />
+    <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\SpriteFont.cpp" />
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\TextureCache.cpp" />
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Timing.cpp" />
     <ClCompile Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\AudioEngine.h" />
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Camera2D.h" />
-    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Errors.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ParticleBatch2D.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ParticleEngine2D.h" />
+    <ClInclude Include="Pixels2DErrors.h" />
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\GLSLProgram.h" />
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\GLTexture.h" />
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ImageLoader.h" />
@@ -167,6 +174,7 @@
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\ResourceManager.h" />
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Sprite.h" />
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\SpriteBatch.h" />
+    <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\SpriteFont.h" />
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\TextureCache.h" />
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Timing.h" />
     <ClInclude Include="..\..\..\Chuck Norris%27 Retirement day\Engine\Pixels2D\Vertex.h" />
