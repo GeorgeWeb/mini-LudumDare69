@@ -22,8 +22,8 @@ public:
 	virtual void update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens, const float &deltaTime) override;
 
 private:
-	glm::vec2 _direction;
-	float _frames;
+	glm::vec2 m_direction;
+	float m_frames;
 };
 
 #endif // !HUMAN_HGUARD

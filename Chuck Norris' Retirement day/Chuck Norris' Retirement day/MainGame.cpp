@@ -1,38 +1,43 @@
 ﻿#include "MainGame.h"
+#include "Gun.h"
 
 #include <Engine/Pixels2D/Pixels2D.h>
 #include <Engine/Pixels2D/Timing.h>
-#include <Engine/Pixels2D/Errors.h>
-
-#include "Gun.h"
+#include <Engine/Pixels2D/Pixels2DErrors.h>
 
 #include <SDL/SDL.h>
+
+#include <glm/gtx/rotate_vector.hpp>
+
 #include <iostream>
 #include <random>
 #include <algorithm>
+#include <string>
 #include <ctime>
+#include <cstdio>
+#include <cstring>
 
-MainGame::MainGame() : _screenWidth(1280), _screenHeight(720), _gameState(GameState::PLAY), _fps(0), _maxFPS(60.0f), _player(nullptr), _numHumansKilled(0), _numAliensKilled(0)
+MainGame::MainGame() : m_screenWidth(1280), m_screenHeight(720), m_gameState(GameState::PLAY), m_fps(0), m_maxFPS(60.0f), m_player(nullptr), m_numHumansKilled(0), m_numAliensKilled(0)
 {
 }
 
 MainGame::~MainGame()
 {
-	if (!_levels.empty())
+	if (!m_levels.empty())
 	{
-		for (auto level : _levels)
+		for (auto level : m_levels)
 			delete level;
 	}
 
-	if (!_humans.empty())
+	if (!m_humans.empty())
 	{
-		for (auto human : _humans)
+		for (auto human : m_humans)
 			delete human;
 	}
 
-	if (!_aliens.empty())
+	if (!m_aliens.empty())
 	{
-		for (auto alien : _aliens)
+		for (auto alien : m_aliens)
 			delete alien;
 	}
 }
@@ -42,7 +47,10 @@ void MainGame::run()
 	initSystems();
 
 	initLevel();
-
+	
+	// load and play the music
+	// - 1 => loop forever
+	m_audioEngine.loadMusic("Sound/XYZ.ogg").play(-1);
 	gameLoop();
 }
 
@@ -51,71 +59,96 @@ void MainGame::initSystems()
 	// initialize the game engine
 	Pixels2D::init();
 
+	// initialize sound, must happen after Pixels2D::init
+	m_audioEngine.init();
+
 	// create the window
-	_window.create("Chuck Norris' Retirement day", _screenWidth, _screenHeight, 0);
+	m_window.create("Chuck Norris' Retirement day", m_screenWidth, m_screenHeight, 0);
 
 	// set background color
 	glClearColor(0.17255, 0.27059, 0.40000, 0);
+	//glClearColor(0, 0, 0, 0);
 
 	// set up the shaders
 	initShaders();
 
-	// initialize a sprite batch
-	_agentSpriteBatch.init();
+	// initialize the sprite batch(es)
+	m_agentSpriteBatch.init();
+	m_hudSpriteBatch.init();
 
-	// set up the camera
-	_camera.init(_screenWidth, _screenHeight);
+	// initialize the sprite font
+	m_spriteFont = new Pixels2D::SpriteFont("Fonts/ARCADECLASSIC.ttf", 32);
+
+	// set up the main camera
+	m_mainCamera.init(m_screenWidth, m_screenHeight);
+
+	// set up the hud camera
+	m_hudCamera.init(m_screenWidth, m_screenHeight);
+	m_hudCamera.setPosition(glm::vec2(m_screenWidth /2, m_screenHeight / 2));
+
+	// initialize particles
+	m_bloodParticleBatch = new Pixels2D::ParticleBatch2D();
+	m_bloodParticleBatch->init(1000, 0.05f, Pixels2D::ResourceManager::getTexture("Textures/particle.png").id, 
+		[] (Pixels2D::Particle2D& particle, const float &deltaTime)
+		{
+			particle.position += particle.velocity * deltaTime;
+			particle.color.a = (GLubyte)(particle.life * 255.0f);
+			// alpha fading not gonna work in release mode, 
+			// I dunno why but there I've got coloring problems
+		}
+	);
+	m_particleEngine.addParticleBatch(m_bloodParticleBatch);
 }
 
 void MainGame::initLevel()
 {
 	// level 1
-	_levels.push_back(new Level("Levels/level1.txt"));
-	_currentLevel = 0;
+	m_levels.push_back(new Level("Levels/level1.txt"));
+	m_currentLevel = 0;
 
 	// initialize player;
-	_player = new Player();
-	_player->init(_levels[_currentLevel]->getPlayerStartPos(), PLAYER_SPEED, PLAYER_HEALTH, &_inputManager, &_camera, &_bullets);
+	m_player = new Player();
+	m_player->init(m_levels[m_currentLevel]->getPlayerStartPos(), PLAYER_SPEED, PLAYER_HEALTH, &m_inputManager, &m_mainCamera, &m_bullets);
 
 	// store humans
-	_humans.push_back(_player);
+	m_humans.push_back(m_player);
 
 	// random number generator
 	std::mt19937 randomEngine;
 	randomEngine.seed(time(nullptr));
-	std::uniform_int_distribution<int> randX(2, _levels[_currentLevel]->getWidth() - 2);
-	std::uniform_int_distribution<int> randY(2, _levels[_currentLevel]->getHeight() - 2);
+	std::uniform_int_distribution<int> randX(2, m_levels[m_currentLevel]->getWidth() - 2);
+	std::uniform_int_distribution<int> randY(2, m_levels[m_currentLevel]->getHeight() - 2);
 
 	// add the humans
-	for (unsigned int i = 0; i < _levels[_currentLevel]->getNumHumans(); i++)
+	for (unsigned int i = 0; i < m_levels[m_currentLevel]->getNumHumans(); i++)
 	{
-		_humans.push_back(new Human());
+		m_humans.push_back(new Human());
 		glm::vec2 position = glm::vec2(randX(randomEngine) * TILE_WIDTH, randY(randomEngine) * TILE_WIDTH);
-		_humans.back()->init(position, HUMAN_SPEED, HUMAN_HEALTH);
+		m_humans.back()->init(position, HUMAN_SPEED, HUMAN_HEALTH);
 	}
 
 	// add the aliens
-	const std::vector<glm::vec2> &alienPositions = _levels[_currentLevel]->getAlienStartPositions();
+	const std::vector<glm::vec2> &alienPositions = m_levels[m_currentLevel]->getAlienStartPositions();
 	for (unsigned int i = 0; i < alienPositions.size(); i++)
 	{
-		_aliens.push_back(new Alien());
-		_aliens.back()->init(alienPositions[i], HUMAN_SPEED, ALIEAN_HEALTH);
+		m_aliens.push_back(new Alien());
+		m_aliens.back()->init(alienPositions[i], HUMAN_SPEED, ALIEAN_HEALTH);
 	}
 
 	// Set up the players guns
-	_player->addGun(new Gun("Revolver", 10, 1, 5.0f, 30, BULLET_SPEED));
-	_player->addGun(new Gun("Shotgun", 30, 12, 20.0f, 4, BULLET_SPEED));
-	_player->addGun(new Gun("MP5", 2, 1, 10.0f, 20, BULLET_SPEED));
+	m_player->addGun(new Gun("Revolver", 20, 1, 5.0f, 50, BULLET_SPEED, m_audioEngine.loadSoundEffect("Sound/shots/pistol.wav")));
+	m_player->addGun(new Gun("Shotgun", 30, 12, 20.0f, 10, BULLET_SPEED, m_audioEngine.loadSoundEffect("Sound/shots/shotgun.wav")));
+	m_player->addGun(new Gun("MP5", 10, 1, 10.0f, 40, BULLET_SPEED, m_audioEngine.loadSoundEffect("Sound/shots/MP5_gun.wav")));
 }
 
 void MainGame::initShaders()
 {
     // Compile our color shader
-    _textureProgram.compileShaders("Shaders/textureShading.vert", "Shaders/textureShading.frag");
-    _textureProgram.addAttribute("vertexPosition");
-    _textureProgram.addAttribute("vertexColor");
-    _textureProgram.addAttribute("vertexUV");
-    _textureProgram.linkShaders();
+    m_textureProgram.compileShaders("Shaders/textureShading.vert", "Shaders/textureShading.frag");
+    m_textureProgram.addAttribute("vertexPosition");
+    m_textureProgram.addAttribute("vertexColor");
+    m_textureProgram.addAttribute("vertexUV");
+    m_textureProgram.linkShaders();
 }
 
 void MainGame::gameLoop()
@@ -125,23 +158,24 @@ void MainGame::gameLoop()
 	// number of milliseconds in a second
 	const float MS_PER_SECOND = 1000.0f;
 	// the desired frame time per frame
-	const float DESIRED_FRAMETIME = MS_PER_SECOND / _maxFPS;
+	const float DESIRED_FRAMETIME = MS_PER_SECOND / m_maxFPS;
 	// maximum size of deltaTime
 	const float MAX_DELTA_TIME = 1.0f;
 	
 	// used to cap the FPS
 	Pixels2D::FPSLimiter fpsLimiter;
-	fpsLimiter.setMaxFPS(_maxFPS);
+	fpsLimiter.setMaxFPS(m_maxFPS);
 
-	// zoom out the camera by 4x
+	// zoom out the cameras by 4x
 	const float CAMERA_SCALE = 1.0f / 4.0f;
-	_camera.setScale(CAMERA_SCALE);
+	m_mainCamera.setScale(CAMERA_SCALE);
+	// _mainCamera.setScale(CAMERA_SCALE);
 
 	// start our previousTicks variable
 	float previousTicks = SDL_GetTicks();
 
 	// main loop
-	while (_gameState == GameState::PLAY)
+	while (m_gameState == GameState::PLAY)
 	{
 		fpsLimiter.beginFrame();
 
@@ -152,7 +186,7 @@ void MainGame::gameLoop()
 
 		checkVictory();
 
-		_inputManager.update();
+		m_inputManager.update();
 
 		processInput();
 
@@ -166,26 +200,27 @@ void MainGame::gameLoop()
 			// update all physics here and pass in deltaTime
 			updateAgents(deltaTime);
 			updateBullets(deltaTime);
+			m_particleEngine.update(deltaTime);
 			// subtract from totalDeltaTime (the length we took)
 			totalDeltaTime -= deltaTime;
 			// increment the frame counter
 			i++;
 		}
 
-		_camera.setPosition(_player->getPosition());
-
-		_camera.update();		
+		m_mainCamera.setPosition(m_player->getPosition());
+		m_mainCamera.update();
+		m_hudCamera.update();
 
 		drawGame();
 
-		_fps = fpsLimiter.endFrame();
+		m_fps = fpsLimiter.endFrame();
 
 		// temporary fps display...
 		static unsigned int frameCounter = 0;
 		frameCounter++;
 		if (frameCounter == 100)
 		{
-			std::cout << _fps << std::endl;
+			std::cout << m_fps << std::endl;
 			frameCounter = 0;
 		}
 	}
@@ -194,64 +229,64 @@ void MainGame::gameLoop()
 void MainGame::updateAgents(const float &deltaTime)
 {
 	// update all humans
-	for (auto human : _humans)
-		human->update(_levels[_currentLevel]->getLevelData(), _humans, _aliens, deltaTime);
+	for (auto human : m_humans)
+		human->update(m_levels[m_currentLevel]->getLevelData(), m_humans, m_aliens, deltaTime);
 
 	// update all aliens
-	for (auto alien : _aliens)
-		alien->update(_levels[_currentLevel]->getLevelData(), _humans, _aliens, deltaTime);
+	for (auto alien : m_aliens)
+		alien->update(m_levels[m_currentLevel]->getLevelData(), m_humans, m_aliens, deltaTime);
 
 	// update alien collisions
-	for (unsigned int i = 0; i < _aliens.size(); i++)
+	for (unsigned int i = 0; i < m_aliens.size(); i++)
 	{
 		// collide with other aliens
-		for (unsigned int j = i + 1; j < _aliens.size(); j++)
-			_aliens[i]->collideWithAgent(_aliens[j]);
+		for (unsigned int j = i + 1; j < m_aliens.size(); j++)
+			m_aliens[i]->collideWithAgent(m_aliens[j]);
 
 		// collide with humans other than player
-		for (unsigned int j = 1; j < _humans.size(); j++)
+		for (unsigned int j = 1; j < m_humans.size(); j++)
 		{
 			// turn the human into zombie
-			if (_aliens[i]->collideWithAgent(_humans[j]))
+			if (m_aliens[i]->collideWithAgent(m_humans[j]))
 			{
 				// add the new alien
-				_aliens.push_back(new Alien());
-				_aliens.back()->init(_humans[j]->getPosition(), ALIEN_SPEED, ALIEAN_HEALTH);
+				m_aliens.push_back(new Alien());
+				m_aliens.back()->init(m_humans[j]->getPosition(), ALIEN_SPEED, ALIEAN_HEALTH);
 
 				// delete the human
-				delete _humans[j];
-				_humans[j] = _humans.back();
-				_humans.pop_back();
+				delete m_humans[j];
+				m_humans[j] = m_humans.back();
+				m_humans.pop_back();
 			}
 		}
 
 		// collide with player
-		if (_aliens[i]->collideWithAgent(_player))
+		if (m_aliens[i]->collideWithAgent(m_player))
 		{
 			Pixels2D::Errors::fatalError("YOU LOSE!");
 		}
 	}
 
 	// update human collisions
-	for (unsigned int i = 0; i < _humans.size(); i++)
+	for (unsigned int i = 0; i < m_humans.size(); i++)
 	{
 		// collide with other humans
-		for (unsigned int j = i + 1; j < _humans.size(); j++)
-			_humans[i]->collideWithAgent(_humans[j]);
+		for (unsigned int j = i + 1; j < m_humans.size(); j++)
+			m_humans[i]->collideWithAgent(m_humans[j]);
 	}
 }
 
 void MainGame::updateBullets(const float &deltaTime)
 {
 	// update and collide with world
-	for (unsigned int i = 0; i < _bullets.size();)
+	for (unsigned int i = 0; i < m_bullets.size();)
 	{
 		// if true => the bullet collided with the world objects
-		if (_bullets[i].update(_levels[_currentLevel]->getLevelData(), deltaTime))
+		if (m_bullets[i].update(m_levels[m_currentLevel]->getLevelData(), deltaTime))
 		{
 			// remove the bullet from the vector
-			_bullets[i] = _bullets.back();
-			_bullets.pop_back();
+			m_bullets[i] = m_bullets.back();
+			m_bullets.pop_back();
 		}
 		else i++;
 	}
@@ -259,29 +294,32 @@ void MainGame::updateBullets(const float &deltaTime)
 	bool wasBulletRemoved;
 
 	// collide with humans and aliens
-	for (int i = 0; i < _bullets.size(); i++)
+	for (int i = 0; i < m_bullets.size(); i++)
 	{
 		wasBulletRemoved = false;
 		// loop through aliens
-		for (int j = 0; j < _aliens.size();)
+		for (int j = 0; j < m_aliens.size();)
 		{
 			// check collision
-			if (_bullets[i].collideWithAgent(_aliens[j]))
+			if (m_bullets[i].collideWithAgent(m_aliens[j]))
 			{
+				// add blood
+				addBlood(m_bullets[i].getPosition(), 5);
+
 				// damage aliens, and kill it if its out of health
-				if (_aliens[j]->applyDamage(_bullets[i].getDamage()))
+				if (m_aliens[j]->applyDamage(m_bullets[i].getDamage()))
 				{
 					// If the zombie died, remove him
-					delete _aliens[j];
-					_aliens[j] = _aliens.back();
-					_aliens.pop_back();
-					_numAliensKilled++;
+					delete m_aliens[j];
+					m_aliens[j] = m_aliens.back();
+					m_aliens.pop_back();
+					m_numAliensKilled++;
 				}
 				else j++;
 
 				// remove the bullet
-				_bullets[i] = _bullets.back();
-				_bullets.pop_back();
+				m_bullets[i] = m_bullets.back();
+				m_bullets.pop_back();
 				wasBulletRemoved = true;
 				// avoid skipping a bullet
 				i--;
@@ -293,25 +331,28 @@ void MainGame::updateBullets(const float &deltaTime)
 		// Loop through humans
 		if (wasBulletRemoved == false)
 		{
-			for (int j = 1; j < _humans.size();)
+			for (int j = 1; j < m_humans.size();)
 			{
 				// check collision
-				if (_bullets[i].collideWithAgent(_humans[j]))
+				if (m_bullets[i].collideWithAgent(m_humans[j]))
 				{
+					// add blood
+					addBlood(m_bullets[i].getPosition(), 5);
+
 					// damage human, and kill it if its out of health
-					if (_humans[j]->applyDamage(_bullets[i].getDamage()))
+					if (m_humans[j]->applyDamage(m_bullets[i].getDamage()))
 					{
 						// If the human died, remove him
-						delete _humans[j];
-						_humans[j] = _humans.back();
-						_humans.pop_back();
+						delete m_humans[j];
+						m_humans[j] = m_humans.back();
+						m_humans.pop_back();
 					}
 					else j++;
 
 					// remove the bullet
-					_bullets[i] = _bullets.back();
-					_bullets.pop_back();
-					_numHumansKilled++;
+					m_bullets[i] = m_bullets.back();
+					m_bullets.pop_back();
+					m_numHumansKilled++;
 					// avoid skipping a bullet
 					i--;
 					// since the bullet died, no need to loop through any more humans
@@ -329,10 +370,10 @@ void MainGame::checkVictory()
 	// _currentLevel++; initLevel(...);
 
 	// if all aliens are dead => player wins
-	if (_aliens.empty())
+	if (m_aliens.empty())
 	{
 		std::printf("*** YOU WIN! ***\n You killed %d humans and %d aliens. There are %d/%d civilians remaining.", 
-			_numHumansKilled, _numAliensKilled, _humans.size() - 1, _levels[_currentLevel]->getNumHumans());
+			m_numHumansKilled, m_numAliensKilled, m_humans.size() - 1, m_levels[m_currentLevel]->getNumHumans());
 
 		Pixels2D::Errors::fatalError("");
 	}
@@ -348,30 +389,30 @@ void MainGame::processInput()
         switch (evnt.type)
 		{
             case SDL_QUIT:
-				_gameState = GameState::EXIT;
+				m_gameState = GameState::EXIT;
                 break;
             case SDL_MOUSEMOTION:
-                _inputManager.setMouseCoords(evnt.motion.x, evnt.motion.y);
+                m_inputManager.setMouseCoords(evnt.motion.x, evnt.motion.y);
                 break;
             case SDL_KEYDOWN:
-                _inputManager.pressKey(evnt.key.keysym.sym);
+                m_inputManager.pressKey(evnt.key.keysym.sym);
                 break;
             case SDL_KEYUP:
-                _inputManager.releaseKey(evnt.key.keysym.sym);
+                m_inputManager.releaseKey(evnt.key.keysym.sym);
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                _inputManager.pressKey(evnt.button.button);
+                m_inputManager.pressKey(evnt.button.button);
                 break;
             case SDL_MOUSEBUTTONUP:
-                _inputManager.releaseKey(evnt.button.button);
+                m_inputManager.releaseKey(evnt.button.button);
                 break;
         }
 		
 		// quit the game
-		if (_inputManager.isKeyDown(SDLK_ESCAPE))
-			_gameState = GameState::EXIT;
+		if (m_inputManager.isKeyDown(SDLK_ESCAPE))
+			m_gameState = GameState::EXIT;
 
-		if (_inputManager.isKeyDown(SDL_BUTTON_LEFT))
+		if (m_inputManager.isKeyDown(SDL_BUTTON_LEFT))
 		{
 
 		}
@@ -385,71 +426,112 @@ void MainGame::drawGame()
     // Clear the color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	_textureProgram.use();
+	m_textureProgram.use();
 
 	glActiveTexture(GL_TEXTURE0);
 
 	// make sure the shader uses texture 0
-	GLint textureUniform = _textureProgram.getUniformLocation("mySampler");
+	GLint textureUniform = m_textureProgram.getUniformLocation("mySampler");
 	glUniform1i(textureUniform, 0);
 
    // get the (projection) camera matrix 
-	glm::mat4 cameraMatrix = _camera.getCameraMatrix();
-	GLint pUniform = _textureProgram.getUniformLocation("P");
+	glm::mat4 cameraMatrix = m_mainCamera.getCameraMatrix();
+	GLint pUniform = m_textureProgram.getUniformLocation("P");
 	glUniformMatrix4fv(pUniform, 1, GL_FALSE, &cameraMatrix[0][0]);
 
 	// draw level
-	_levels[_currentLevel]->draw();
+	m_levels[m_currentLevel]->draw();
 
-	_agentSpriteBatch.begin();
+	m_agentSpriteBatch.begin();
+	m_hudSpriteBatch.init();
 
 	const glm::vec2 agentDims(AGENT_RADIUS * 2.0f);
 
 	// human texture types
-	static int playerTextureID = Pixels2D::ResourceManager::getTexture("Textures/Player/bro5_fire0004@2x.png").id;
+	static int playerTextureID = Pixels2D::ResourceManager::getTexture("Textures/Player/chuck_norris.png").id;
 	static int humanTextureID = Pixels2D::ResourceManager::getTexture("Textures/NPCs/human.png").id;
 	// draw humans
-	for (auto &human : _humans)
+	for (auto &human : m_humans)
 	{
-		if (human == _humans.front())
+		if (human == m_humans.front())
 		{
 			// draw the player with unique texture
-			human->draw(_agentSpriteBatch, playerTextureID);
+			human->draw(m_agentSpriteBatch, playerTextureID);
 		}
 		else
 		{
 			// draw the other humans with different texture
 			// and check ...
-			if(_camera.isBoxInView(human->getPosition(), agentDims))
-				human->draw(_agentSpriteBatch, humanTextureID);
+			if(m_mainCamera.isBoxInView(human->getPosition(), agentDims))
+				human->draw(m_agentSpriteBatch, humanTextureID);
 		}
 	}
 
 	// alien texture
-	static int alienTextureID = Pixels2D::ResourceManager::getTexture("Textures/NPCs/zombie-scared-face.png").id;
+	static int alienTextureID = Pixels2D::ResourceManager::getTexture("Textures/NPCs/alien.png").id;
 	// draw aliens
-	for (auto &alien : _aliens)
+	for (auto &alien : m_aliens)
 	{
 		// do the check ...
-		if (_camera.isBoxInView(alien->getPosition(), agentDims))
-			alien->draw(_agentSpriteBatch, alienTextureID);
+		if (m_mainCamera.isBoxInView(alien->getPosition(), agentDims))
+			alien->draw(m_agentSpriteBatch, alienTextureID);
 	}
 	
 	// bullet texture: ...
 	// draw bullets
-	for (auto &bullet : _bullets)
+	for (auto &bullet : m_bullets)
 	{
 		// do the check ...
-		if (_camera.isBoxInView(bullet.getPosition(), agentDims))
-			bullet.draw(_agentSpriteBatch);
+		if (m_mainCamera.isBoxInView(bullet.getPosition(), agentDims))
+			bullet.draw(m_agentSpriteBatch);
 	}
 
-	_agentSpriteBatch.end();
+	// end sprite batch creation
+	m_agentSpriteBatch.end();
+	// render to the screen
+	m_agentSpriteBatch.renderBatch();
 
-	_agentSpriteBatch.renderBatch();
+	// render the particles
+	m_particleEngine.draw(&m_agentSpriteBatch);
 
-	_textureProgram.unuse();
+	// draw the HUD
+	drawHUD();
 
-    // Swap our buffer and draw everything to the screen!
-    _window.swapBuffer();
+	m_textureProgram.unuse();
+
+    // swap our buffer and draw everything to the screen
+    m_window.swapBuffer();
+}
+
+void MainGame::drawHUD()
+{
+	char buffer[256];
+
+	glm::mat4 projectionMatrix = m_hudCamera.getCameraMatrix();
+	GLint pUniform = m_textureProgram.getUniformLocation("P");
+	glUniformMatrix4fv(pUniform, 1, GL_FALSE, &projectionMatrix[0][0]);
+
+	m_hudSpriteBatch.begin();
+
+	sprintf_s(buffer, "Humans  %d", m_humans.size());
+	m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(10.0f, 5.0f), glm::vec2(1.0f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+
+	sprintf_s(buffer, "Aliens  %d", m_aliens.size());
+	m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(10.0f, 30.0f), glm::vec2(1.0f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+
+	m_hudSpriteBatch.end();
+	m_hudSpriteBatch.renderBatch();
+}
+
+void MainGame::addBlood(const glm::vec2 &position, const int &numParticles)
+{
+	static std::mt19937 randEngine(time(nullptr));
+	static std::uniform_real_distribution<float> randAngle(0.0f, 360.0f);
+
+	glm::vec2 vel(2.0f, 0.0f);
+	Pixels2D::ColorRGBA8 col(255, 0, 0, 255);
+
+	for (int i = 0; i < numParticles; i++) {
+		m_bloodParticleBatch->addParticle(position, glm::rotate(vel, glm::radians(randAngle(randEngine))), col, 30.0f);
+	}
 }

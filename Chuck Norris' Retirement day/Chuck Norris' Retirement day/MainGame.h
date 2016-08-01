@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef MAINGAME_HGUARD
 #define MAINGAME_HGUARD
 
@@ -7,6 +9,10 @@
 #include <Engine/Pixels2D/InputManager.h>
 #include <Engine/Pixels2D/ResourceManager.h>
 #include <Engine/Pixels2D/SpriteBatch.h>
+#include <Engine/Pixels2D/SpriteFont.h>
+#include <Engine/Pixels2D/AudioEngine.h>
+#include <Engine/Pixels2D/ParticleEngine2D.h>
+#include <Engine/Pixels2D/ParticleEngine2D.h>
 
 #include "Level.h"
 #include "Player.h"
@@ -55,51 +61,70 @@ private:
 	// renders the game
 	void drawGame();
 
+	// draw the HUD
+	void drawHUD();
+
+	// spawns blood particles on collision with bullets
+	void addBlood(const glm::vec2 &position, const int &numParticles);
+
 private:
 	// the game window
-	Pixels2D::Window _window;
+	Pixels2D::Window m_window;
 
 	// the shader program
-	Pixels2D::GLSLProgram _textureProgram;
+	Pixels2D::GLSLProgram m_textureProgram;
 
 	// handles input
-	Pixels2D::InputManager _inputManager;
+	Pixels2D::InputManager m_inputManager;
 
 	// main camera
-	Pixels2D::Camera2D _camera;
+	Pixels2D::Camera2D m_mainCamera;
+	// HUD camera
+	Pixels2D::Camera2D m_hudCamera;
 
 	// draws all agents
-	Pixels2D::SpriteBatch _agentSpriteBatch;
+	Pixels2D::SpriteBatch m_agentSpriteBatch;
+	// draws UI
+	Pixels2D::SpriteBatch m_hudSpriteBatch;
+	
+	Pixels2D::ParticleEngine2D m_particleEngine;
+	Pixels2D::ParticleBatch2D* m_bloodParticleBatch;
+
+	// loads the font
+	Pixels2D::SpriteFont *m_spriteFont;
+
+	// manages all of the game audio
+	Pixels2D::AudioEngine m_audioEngine;
 
 	// a vector of all levels
-	std::vector<Level*> _levels;
+	std::vector<Level*> m_levels;
 
 	// a vector of all humans
-	std::vector<Human*> _humans;
+	std::vector<Human*> m_humans;
 	
 	// a vector of all aliens
-	std::vector<Alien*> _aliens;
+	std::vector<Alien*> m_aliens;
 
-	std::vector<Bullet> _bullets;
+	std::vector<Bullet> m_bullets;
 
-	Player *_player;
+	Player *m_player;
 
 	// window dimensions
-	unsigned int _screenWidth, _screenHeight;
+	unsigned int m_screenWidth, m_screenHeight;
 
 	// Game state
-	GameState _gameState;
+	GameState m_gameState;
 
-	float _fps;
-	const float _maxFPS;
+	float m_fps;
+	const float m_maxFPS;
 
-	unsigned int _currentLevel;
+	unsigned int m_currentLevel;
 
 	// humans killed by player
-	unsigned int _numHumansKilled;
+	unsigned int m_numHumansKilled;
 	
 	// aliens killed by player
-	unsigned int _numAliensKilled;
+	unsigned int m_numAliensKilled;
 };
 
 #endif // !MAINGAME_HGUARD
