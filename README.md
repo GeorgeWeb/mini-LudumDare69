@@ -26,4 +26,4 @@ In order to run it, just unzip and click the .exe file. :)
 
 The development time of the game itself was about 3 days, while that version of the engine took me 2+ weeks. 
 
-*UPDATE: For those who experience troubles with starting the game, read the following! Until I fix the issue with the error - missing MSVCP140.dll, you will need to download https://www.microsoft.com/en-us/download/details.aspx?id=48145 , the file you need is: vc_redist.x86.exe.
+**UPDATE**: For those who experience troubles with starting the game, read the following! Until I fix the issue with the error - missing MSVCP140.dll, you will need to download https://www.microsoft.com/en-us/download/details.aspx?id=48145 , the file you need is: vc_redist.x86.exe.
