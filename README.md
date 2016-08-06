@@ -6,7 +6,7 @@
 ----------------------------------------------------------------------- 
 
 This is my first Ludum Dare's entry game. 
-It is created using my own 2D engine I called Pixels2D, developed in C++ using OpenGL and SDL. 
+It is created using custom 2D engine I called Pixels2D, developed in C++ using OpenGL and SDL. 
 You can access the engine on: https://github.com/GeorgeWeb/Pixels2D 
 
 The game's idea is simple. Alien invaders came to destroy the humankind but there he is Chuck Norris appearing as the last hope of all. Playing as Chuck you have to kill all aliens and prevent them from removing the mankind off the Earth. 
