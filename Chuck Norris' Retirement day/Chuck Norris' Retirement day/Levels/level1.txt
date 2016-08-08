@@ -15,8 +15,8 @@ X..mm.........................................mm.......LffffffffffffffffffL.....
 X..mm.........................................mm.......LGGLBBBBL..LBBBBLGGL........BfffffffffffffffffffffffB...X
 X..mm.........................................mm...................................BfffffffffffffffffffffffB...X
 X..mm.........................................mm...................................BBBGBBGBBGBB.BBGBBGBBGBBB...X
-X..mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm@mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm................................X
-X..mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm................................X
+X..mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm@mmsmmmmmmmmmmmmmmmmmmmmmmmmmmmmm................................X
+X..mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmAmmmmmmmmmmmmmmmmmmmmmmmmmm................................X
 X..................................m.........................................mm................................X
 X...................................m.......................................mm.................................X
 X.............RRRRGGRRRRGGRRRR.......m.....................................mm..................................X
@@ -33,7 +33,7 @@ X.............GffffffffffffffG........mm.................................Bffffff
 X.............GffffffffffffffG........mm.................................BfffffffB..............mm.............X
 X.............RLLLLLfLLLLfLLLR........mm.................................BBBBmBBBB..............mm.............X
 X.............RffffffffffffffR........mm....................................mm..................mm.............X
-X.............RffffffffffffffR........mmmm.................................mm...................mm.............X
+X.............RffffffffffffffR........mmmm.................................mm........s..........mm.............X
 X.............RRRRGGRRRRGGRRRR........mm..m...............................mm....................mm.............X
 X.....................................mm...m............................mm.....................mm..............X
 X....................................mm.....m....................BBGGBLmmLBGGBB...............mm...............X
@@ -41,13 +41,13 @@ X..........LLLLLGGGLLLLLLLLLLLLGGGLLLLL......BGBBGBm.............BffffffffffffB.
 X..........LfffffffffffffLffffffffffffL......BffffB.mmmm.........BffffffffffffB.............mm.................X
 X..........GfffffffffffffLffffffffffffG......BffffG....m.........LffffffffffffL.........mmmmm..................X
 X..........LLLLLLL.LLLLLLLLLLLLL.LLLLLL.......ffffG....mmmmmmmmmmmffffffffffffmmmmmmmmmmm......................X
-X............................................BffffB....m.........LffffffffffffL.........m......................X
+X............................................BffffB....m.........LffffffffffffL.........m.................a....X
 X............................................BGBBGB....m.........BffffffffffffB.........m......................X
 X..........LLLL.LLLLLLLLL.LLLLLLLL.LLLL................m.........BffffffffffffB.........m..LLB.BLL.............X
 X..........GfffffffLffffffffffLfffffffG................m.........BBGGBL..LBGGBB.........m..BfffffB.............X
 X..........LfffffffLffffffffffLfffffffL................m...............................mmmmffffffB.............X
 X..........LLLL.LLLLLLLLL.LLLLLLLL.LLLL......RRR.RRR...m...................................Bfffff..............X
 X............................................RfffffR..m....................................BfffffB.............X
-X.............................................fffffmmm.....................................LLGGGLL.........A...X
+X.............................................fffffmmm.....................................LLGGGLL.........a...X
 X............................................RfffffR...........................................................X
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

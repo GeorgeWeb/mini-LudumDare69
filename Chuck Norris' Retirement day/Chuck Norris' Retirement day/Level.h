@@ -1,5 +1,8 @@
 #ifndef LEVEL_HGUARD
 #define LEVEL_HGUARD
+#ifdef PRAGMA_ONCE
+	#pragma once
+#endif
 
 #include <Engine/Pixels2D/SpriteBatch.h>
 
@@ -15,7 +18,9 @@ public:
 	Level(const std::string &fileName);
 	~Level();
 
+	void processLevelTiles();
 	void draw();
+	void replaceLevelTile(const glm::vec2 &position, char &tileToReplace, const char &replacementTile);
 
 	// getters
 	inline glm::vec2 getPlayerStartPos() const { return m_playerStartPosition; }

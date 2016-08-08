@@ -1,5 +1,8 @@
 #ifndef BULLET_HGUARD
 #define BULLET_HGUARD
+#ifdef PRAGMA_ONCE
+	#pragma once
+#endif
 
 #include <Engine/Pixels2D/SpriteBatch.h>
 

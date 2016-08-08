@@ -1,5 +1,8 @@
 #ifndef VERTEX_HGUARD
 #define VERTEX_HGUARD
+#ifdef PRAGMA_ONCE
+	#pragma once
+#endif
 
 #include <GL/glew.h>
 

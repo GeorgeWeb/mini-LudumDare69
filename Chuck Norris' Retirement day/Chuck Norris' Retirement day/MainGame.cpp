@@ -17,36 +17,35 @@
 #include <cstdio>
 #include <cstring>
 
-MainGame::MainGame() : m_screenWidth(1280), m_screenHeight(720), m_gameState(GameState::PLAY), m_fps(0), m_maxFPS(60.0f), m_player(nullptr), m_numHumansKilled(0), m_numAliensKilled(0)
+MainGame::MainGame() : m_screenWidth(1280), m_screenHeight(720), m_gameState(GameState::PLAY), m_fps(0), m_maxFPS(60.0f), 
+					   m_player(nullptr), m_numHumansKilled(0), m_numAliensKilled(0)
 {
+	// Empty
 }
 
 MainGame::~MainGame()
 {
-	if (!m_levels.empty())
-	{
-		for (auto level : m_levels)
-			delete level;
-	}
+	for (auto level : m_levels)
+		delete level;
 
-	if (!m_humans.empty())
-	{
-		for (auto human : m_humans)
-			delete human;
-	}
+	m_levels.clear();
 
-	if (!m_aliens.empty())
-	{
-		for (auto alien : m_aliens)
-			delete alien;
-	}
+	for (auto human : m_humans)
+		delete human;
+		
+	m_humans.clear();
+
+	for (auto alien : m_aliens)
+		delete alien;
+		
+	m_aliens.clear();
 }
 
 void MainGame::run()
 {
 	initSystems();
 
-	initLevel();
+	initLevel(new Level("Levels/level1.txt"), m_currentLevel);
 	
 	// load and play the music
 	// - 1 => loop forever
@@ -59,7 +58,7 @@ void MainGame::initSystems()
 	// initialize the game engine
 	Pixels2D::init();
 
-	// initialize sound, must happen after Pixels2D::init
+	// initialize sound
 	m_audioEngine.init();
 
 	// create the window
@@ -77,7 +76,7 @@ void MainGame::initSystems()
 	m_hudSpriteBatch.init();
 
 	// initialize the sprite font
-	m_spriteFont = new Pixels2D::SpriteFont("Fonts/ARCADECLASSIC.ttf", 32);
+	m_spriteFont = new Pixels2D::SpriteFont("Fonts/Consolas.ttf", 32);
 
 	// set up the main camera
 	m_mainCamera.init(m_screenWidth, m_screenHeight);
@@ -100,11 +99,16 @@ void MainGame::initSystems()
 	m_particleEngine.addParticleBatch(m_bloodParticleBatch);
 }
 
-void MainGame::initLevel()
+void MainGame::initLevel(Level *level, const int &levelID)
 {
 	// level 1
-	m_levels.push_back(new Level("Levels/level1.txt"));
-	m_currentLevel = 0;
+	m_levels.push_back(level);
+	if (levelID != 0)
+		m_currentLevel = levelID;
+	else
+		m_currentLevel = 0;
+
+	std::cout << m_currentLevel << std::endl;
 
 	// initialize player;
 	m_player = new Player();
@@ -136,9 +140,8 @@ void MainGame::initLevel()
 	}
 
 	// Set up the players guns
-	m_player->addGun(new Gun("Revolver", 20, 1, 5.0f, 50, BULLET_SPEED, m_audioEngine.loadSoundEffect("Sound/shots/pistol.wav")));
-	m_player->addGun(new Gun("Shotgun", 30, 12, 20.0f, 10, BULLET_SPEED, m_audioEngine.loadSoundEffect("Sound/shots/shotgun.wav")));
-	m_player->addGun(new Gun("MP5", 10, 1, 10.0f, 40, BULLET_SPEED, m_audioEngine.loadSoundEffect("Sound/shots/MP5_gun.wav")));
+	m_player->addGun(new Gun("Revolver", 20, 1, 1.0f, 50, BULLET_SPEED, m_audioEngine.loadSoundEffect("Sound/shots/pistol.wav")));
+	m_player->addGun(new Gun("MP5", 5, 1, 1.0f, 40, BULLET_SPEED, m_audioEngine.loadSoundEffect("Sound/shots/MP5_gun.wav")));
 }
 
 void MainGame::initShaders()
@@ -167,7 +170,7 @@ void MainGame::gameLoop()
 	fpsLimiter.setMaxFPS(m_maxFPS);
 
 	// zoom out the cameras by 4x
-	const float CAMERA_SCALE = 1.0f / 4.0f;
+	const float CAMERA_SCALE = 1.0f / 3.0f;
 	m_mainCamera.setScale(CAMERA_SCALE);
 	// _mainCamera.setScale(CAMERA_SCALE);
 
@@ -214,15 +217,6 @@ void MainGame::gameLoop()
 		drawGame();
 
 		m_fps = fpsLimiter.endFrame();
-
-		// temporary fps display...
-		static unsigned int frameCounter = 0;
-		frameCounter++;
-		if (frameCounter == 100)
-		{
-			std::cout << m_fps << std::endl;
-			frameCounter = 0;
-		}
 	}
 }
 
@@ -246,24 +240,48 @@ void MainGame::updateAgents(const float &deltaTime)
 		// collide with humans other than player
 		for (unsigned int j = 1; j < m_humans.size(); j++)
 		{
-			// turn the human into zombie
+			// turn the human into alien
 			if (m_aliens[i]->collideWithAgent(m_humans[j]))
 			{
-				// add the new alien
-				m_aliens.push_back(new Alien());
-				m_aliens.back()->init(m_humans[j]->getPosition(), ALIEN_SPEED, ALIEAN_HEALTH);
+				static unsigned int attackSpeedForHumans = 0;
+				attackSpeedForHumans++;
+				if (attackSpeedForHumans == 60)
+				{
+					if (m_humans[j]->applyDamage(ALIEN_DAMAGE))
+					{
+						// add the new alien
+						m_aliens.push_back(new Alien());
+						m_aliens.back()->init(m_humans[j]->getPosition(), ALIEN_SPEED, ALIEAN_HEALTH);
 
-				// delete the human
-				delete m_humans[j];
-				m_humans[j] = m_humans.back();
-				m_humans.pop_back();
+						// delete the human
+						delete m_humans[j];
+						m_humans[j] = m_humans.back();
+						m_humans.pop_back();
+					}
+					attackSpeedForHumans = 0;
+				}
 			}
 		}
 
 		// collide with player
 		if (m_aliens[i]->collideWithAgent(m_player))
 		{
-			Pixels2D::Errors::fatalError("YOU LOSE!");
+			static unsigned int attackSpeedForPlayer = 0;
+			attackSpeedForPlayer++;
+			if (attackSpeedForPlayer == 60)
+			{
+				if (m_player->applyDamage(ALIEN_DAMAGE))
+				{
+					// remove the player
+					//delete m_player;
+					m_humans.erase(m_humans.begin());
+					m_numHumansKilled++;
+
+					// lose the game
+					m_loss = true;
+				}
+				attackSpeedForPlayer = 0;
+			}
 		}
 	}
 
@@ -367,16 +385,28 @@ void MainGame::updateBullets(const float &deltaTime)
 void MainGame::checkVictory()
 {
 	// ...implement more levels...
-	// _currentLevel++; initLevel(...);
-
+	/*
+	if (m_aliens.empty())
+	{
+		m_levels.pop_back();
+		m_currentLevel++;
+		std::cout << m_currentLevel << std::endl;
+		initLevel(new Level("Levels/level" + std::to_string(m_currentLevel) + ".txt"), m_currentLevel);
+	}
+	*/
+		
 	// if all aliens are dead => player wins
 	if (m_aliens.empty())
 	{
-		std::printf("*** YOU WIN! ***\n You killed %d humans and %d aliens. There are %d/%d civilians remaining.", 
-			m_numHumansKilled, m_numAliensKilled, m_humans.size() - 1, m_levels[m_currentLevel]->getNumHumans());
+		m_victory = true;
+		//std::printf("*** YOU WIN! ***\n You killed %d humans and %d aliens. There are %d/%d civilians remaining.", 
+			//m_numHumansKilled, m_numAliensKilled, m_humans.size() - 1, m_levels[m_currentLevel]->getNumHumans());
 
-		Pixels2D::Errors::fatalError("");
+		//Pixels2D::Errors::fatalError("");
+
+
 	}
+	
 }
 
 void MainGame::processInput()
@@ -421,10 +451,10 @@ void MainGame::processInput()
 
 void MainGame::drawGame()
 {
-    // Set the base depth to 1.0
-    glClearDepth(1.0);
-    // Clear the color and depth buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Set the base depth to 1.0
+	glClearDepth(1.0);
+	// Clear the color and depth buffer
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	m_textureProgram.use();
 
@@ -434,7 +464,7 @@ void MainGame::drawGame()
 	GLint textureUniform = m_textureProgram.getUniformLocation("mySampler");
 	glUniform1i(textureUniform, 0);
 
-   // get the (projection) camera matrix 
+	// get the (projection) camera matrix 
 	glm::mat4 cameraMatrix = m_mainCamera.getCameraMatrix();
 	GLint pUniform = m_textureProgram.getUniformLocation("P");
 	glUniformMatrix4fv(pUniform, 1, GL_FALSE, &cameraMatrix[0][0]);
@@ -447,44 +477,25 @@ void MainGame::drawGame()
 
 	const glm::vec2 agentDims(AGENT_RADIUS * 2.0f);
 
-	// human texture types
-	static int playerTextureID = Pixels2D::ResourceManager::getTexture("Textures/Player/chuck_norris.png").id;
-	static int humanTextureID = Pixels2D::ResourceManager::getTexture("Textures/NPCs/human.png").id;
-	// draw humans
+	// draw humans and player(as the first human)
 	for (auto &human : m_humans)
 	{
-		if (human == m_humans.front())
-		{
-			// draw the player with unique texture
-			human->draw(m_agentSpriteBatch, playerTextureID);
-		}
-		else
-		{
-			// draw the other humans with different texture
-			// and check ...
-			if(m_mainCamera.isBoxInView(human->getPosition(), agentDims))
-				human->draw(m_agentSpriteBatch, humanTextureID);
-		}
+		// check if all humansa are in box view
+		if (m_mainCamera.isBoxInView(human->getPosition(), agentDims))
+			human->draw(m_agentSpriteBatch);
 	}
 
-	// alien texture
-	static int alienTextureID = Pixels2D::ResourceManager::getTexture("Textures/NPCs/alien.png").id;
 	// draw aliens
 	for (auto &alien : m_aliens)
 	{
-		// do the check ...
+		// check if all aliens are in box view
 		if (m_mainCamera.isBoxInView(alien->getPosition(), agentDims))
-			alien->draw(m_agentSpriteBatch, alienTextureID);
+			alien->draw(m_agentSpriteBatch);
 	}
 	
-	// bullet texture: ...
 	// draw bullets
 	for (auto &bullet : m_bullets)
-	{
-		// do the check ...
-		if (m_mainCamera.isBoxInView(bullet.getPosition(), agentDims))
-			bullet.draw(m_agentSpriteBatch);
-	}
+		bullet.draw(m_agentSpriteBatch);
 
 	// end sprite batch creation
 	m_agentSpriteBatch.end();
@@ -513,11 +524,85 @@ void MainGame::drawHUD()
 
 	m_hudSpriteBatch.begin();
 
-	sprintf_s(buffer, "Humans  %d", m_humans.size());
-	m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(10.0f, 5.0f), glm::vec2(1.0f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+	if (m_victory)
+	{
+		static unsigned int lossTimer = 0;
+		lossTimer++;
+		if (lossTimer < 30)
+		{
+			sprintf_s(buffer, "Wooo You Won!");
+			m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(m_screenWidth / 2.0f - 75.0f, m_screenHeight - 50.0f),
+				glm::vec2(1.0f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
 
-	sprintf_s(buffer, "Aliens  %d", m_aliens.size());
-	m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(10.0f, 30.0f), glm::vec2(1.0f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+			if(m_humans.size() != 1)
+				sprintf_s(buffer, 256, "You got %d humans left in town!", m_humans.size());
+			else
+				sprintf_s(buffer, 256, "You got %d human left in town!", m_humans.size());
+
+			m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(m_screenWidth / 2.0f - 250.0f, 5.0f), glm::vec2(1.0f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+		}
+		else Quit(buffer);
+	}
+	else if (m_loss)
+	{
+		static unsigned int lossTimer = 0;
+		lossTimer++;
+		if (lossTimer < 30)
+		{
+			sprintf_s(buffer, 256, "Shit You Died!");
+			m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(m_screenWidth / 2.0f - 75.0f, m_screenHeight - 50.0f),
+				glm::vec2(1.0f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+		}
+		else Quit(buffer);
+	}
+	else
+	{
+		// game version gui
+		glm::ivec3 version(1, 1, 0);
+		sprintf_s(buffer, 256, "v%d.%d.%d", version.x, version.y, version.z);
+		m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(m_screenWidth - 75.0f, 10.0f), glm::vec2(0.5f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+
+		// player stats
+		unsigned int playerHealth = m_player->m_health;
+		sprintf_s(buffer, 256, "HP: %u", playerHealth);
+		m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(10.0f, m_screenHeight - 50.0f), glm::vec2(1.0f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+
+		// humans/aliens stats gui
+		sprintf_s(buffer, "Humans: %d", m_humans.size());
+		m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(10.0f, 5.0f), glm::vec2(1.0f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+
+		sprintf_s(buffer, 256, "Aliens: %d", m_aliens.size());
+		m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(10.0f, 35.0f), glm::vec2(1.0f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+
+		// weapons gui
+		sprintf_s(buffer, "1. Revolver");
+		m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(m_screenWidth - 150.0f, m_screenHeight - 35.0f),
+			glm::vec2(0.66f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+
+		sprintf_s(buffer, 256, "2. MP5  SMG");
+		m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(m_screenWidth - 150.0f, m_screenHeight - 60.0f),
+			glm::vec2(0.66f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+
+		if (m_player->wasPickedUpShotgun)
+		{
+			sprintf_s(buffer, 256, "3. Shotgun");
+			m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(m_screenWidth - 150.0f, m_screenHeight - 85.0f),
+				glm::vec2(0.66f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+		}
+
+		// pick-ups gui
+		if (m_player->wasPickedUpShotgun)
+		{
+			static unsigned int pickUpTimer = 0;
+			pickUpTimer++;
+			if(pickUpTimer < 360)
+			{
+				sprintf_s(buffer, 256, "Picked up Shotgun!");
+				m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(m_screenWidth / 2.0f - 150.0f, m_screenHeight - 50.0f),
+					glm::vec2(1.0f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+			}
+		}
+	}
 
 	m_hudSpriteBatch.end();
 	m_hudSpriteBatch.renderBatch();
@@ -533,5 +618,30 @@ void MainGame::addBlood(const glm::vec2 &position, const int &numParticles)
 
 	for (int i = 0; i < numParticles; i++) {
 		m_bloodParticleBatch->addParticle(position, glm::rotate(vel, glm::radians(randAngle(randEngine))), col, 30.0f);
+	}
+}
+
+void MainGame::Quit(char *buffer)
+{
+	m_window.swapBuffer();
+
+	static unsigned int quitTimer = 0;
+	quitTimer++;
+	static unsigned int counter = 8;
+
+	if (quitTimer == 60)
+	{
+		counter--;
+		std::cout << "Quitting in " << counter << std::endl;
+		sprintf_s(buffer, 256, "Quitting in %d", counter);
+		m_spriteFont->draw(m_hudSpriteBatch, buffer, glm::vec2(m_screenWidth / 2.0f - 230.0f, m_screenHeight / 2.0f),
+			glm::vec2(2.0f), 0.0f, Pixels2D::ColorRGBA8(255, 255, 255, 255));
+		m_window.swapBuffer();
+		if (counter <= 0)
+		{
+			SDL_Quit();
+			exit(69);
+		}
+		quitTimer = 0;
 	}
 }

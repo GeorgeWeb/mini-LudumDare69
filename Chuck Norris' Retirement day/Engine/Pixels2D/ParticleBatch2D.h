@@ -1,7 +1,8 @@
-#pragma once
-
 #ifndef PARTICLEBATCH2D_HGUARD
 #define PARTICLEBATCH2D_HGUARD
+#ifdef PRAGMA_ONCE
+	#pragma once
+#endif
 
 #include "Vertex.h"
 #include "SpriteBatch.h"

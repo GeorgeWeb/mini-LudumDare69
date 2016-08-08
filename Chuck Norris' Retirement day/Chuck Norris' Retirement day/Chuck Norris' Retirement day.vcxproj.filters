@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Levels\level1.txt" />
+    <Text Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Levels\level2.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Chuck Norris%27 Retirement day\Chuck Norris%27 Retirement day\Shaders\textureShading.frag" />

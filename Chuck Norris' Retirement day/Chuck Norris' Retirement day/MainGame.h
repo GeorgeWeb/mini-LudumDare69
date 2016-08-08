@@ -1,7 +1,8 @@
-#pragma once
-
 #ifndef MAINGAME_HGUARD
 #define MAINGAME_HGUARD
+#ifdef PRAGMA_ONCE
+	#pragma once
+#endif
 
 #include <Engine/Pixels2D/Window.h>
 #include <Engine/Pixels2D/GLSLProgram.h>
@@ -30,7 +31,6 @@ public:
 	MainGame();
 	~MainGame();
 
-	// runs the game
 	void run();
 
 private:
@@ -38,7 +38,7 @@ private:
 	void initSystems();
 
 	// initializes the level
-	void initLevel();
+	void initLevel(Level *level, const int &levelID);
 
 	// initializes the shaders
 	void initShaders();
@@ -66,6 +66,9 @@ private:
 
 	// spawns blood particles on collision with bullets
 	void addBlood(const glm::vec2 &position, const int &numParticles);
+
+	// quit the game
+	void Quit(char *buffer);
 
 private:
 	// the game window
@@ -125,6 +128,11 @@ private:
 	
 	// aliens killed by player
 	unsigned int m_numAliensKilled;
+
+	bool m_victory = false;
+	bool m_loss = false;
+
+	glm::ivec3 m_version;
 };
 
 #endif // !MAINGAME_HGUARD

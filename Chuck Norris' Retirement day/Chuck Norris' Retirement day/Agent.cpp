@@ -1,4 +1,7 @@
 #include "Agent.h"
+#include "Human.h"
+#include "Alien.h"
+#include "Player.h"
 #include "Level.h"
 
 #include <Engine/Pixels2D/ResourceManager.h>
@@ -6,7 +9,7 @@
 #include <math.h>
 #include <algorithm>
 
-Agent::Agent()
+Agent::Agent() : m_direction(1.0f, 0.0f)
 {
 }
 
@@ -15,13 +18,12 @@ Agent::~Agent()
 }
 
 // add different texture for humans than the one that the player uses.
-void Agent::draw(Pixels2D::SpriteBatch &spriteBatch, const int &textureID)
+void Agent::draw(Pixels2D::SpriteBatch &spriteBatch)
 {
 	const glm::vec4 uvRect(0.0f, 0.0f, 1.0f, 1.0f);
+	const glm::vec4 destRect(m_position.x, m_position.y, AGENT_WIDTH, AGENT_WIDTH);
 
-	glm::vec4 destRect(m_position.x, m_position.y, AGENT_WIDTH, AGENT_WIDTH);
-	
-	spriteBatch.draw(destRect, uvRect, textureID, 0.0f, m_color);
+	spriteBatch.draw(destRect, uvRect, m_textureID, 0.0f, m_color, m_direction);
 }
 
 bool Agent::collideWithLevel(const std::vector<std::string> &levelData)
@@ -109,8 +111,8 @@ void Agent::checkTilePosition(const std::vector<std::string> &levelData, std::ve
 		return;
 	}
 	
-	// if this is not an air tile, we should collide with it
-	if (levelData[cornerPosition.y][cornerPosition.x] != '.' 
+	// if this is not an ground tile types, we should collide with it
+	if (levelData[cornerPosition.y][cornerPosition.x] != '.'
 	&& levelData[cornerPosition.y][cornerPosition.x] != 'f'
 	&& levelData[cornerPosition.y][cornerPosition.x] != 'm'
 	&& levelData[cornerPosition.y][cornerPosition.x] != 'G')

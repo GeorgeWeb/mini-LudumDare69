@@ -1,7 +1,8 @@
-#pragma once
-
 #ifndef GUN_HGUARD
 #define GUN_HGUARD
+#ifdef PRAGMA_ONCE
+#pragma once
+#endif
 
 #include "Bullet.h"
 

@@ -1,5 +1,7 @@
 #include "Human.h"
 
+#include <Engine/Pixels2D/ResourceManager.h>
+
 #include <glm/gtx/rotate_vector.hpp>
 
 #include <random>
@@ -18,9 +20,11 @@ void Human::init(const glm::vec2 &position, const float &speed, const float &hea
 	// random number generator
 	static std::mt19937 randomEngine(time(nullptr));
 	static std::uniform_real_distribution<float> randDir(-1.0f, 1.0f);
-
-	m_color = Pixels2D::ColorRGBA8(255, 255, 255, 255);
+	
 	// initializations
+	m_color = Pixels2D::ColorRGBA8(255, 255, 255, 255);
+	m_textureID = Pixels2D::ResourceManager::getTexture("Textures/NPCs/new-human.png").id;
+
 	m_position = position;
 	m_direction = glm::vec2(randDir(randomEngine), randDir(randomEngine));
 	m_speed = speed;
@@ -32,7 +36,7 @@ void Human::init(const glm::vec2 &position, const float &speed, const float &hea
 	m_direction = glm::normalize(m_direction);
 }
 
-void Human::update(const std::vector<std::string> &levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens, const float &deltaTime)
+void Human::update(std::vector<std::string> levelData, std::vector<Human*> &humans, std::vector<Alien*> &aliens, const float &deltaTime)
 {
 	static std::mt19937 randomEngine(time(nullptr));
 	static std::uniform_real_distribution<float> randRotate(-60.0f, 60.0f);
